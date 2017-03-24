@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Lamp Control</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var user = 0;
+        var pass = "0a1b2c3d";
+        var statusOff = "img/BlackLight.png";
+        var statusOn = "img/GreenLight.png";
+        var statusPending = "img/YellowLight.png";
+        var statusError = "img/RedLight.png";
+        var statusSet = [statusOff, statusOn, statusPending, statusError];
+        var socket = io();
+        socket.on('update', function(update) {
+            console.log('update:');
+            console.log(update);
+            var device = document.getElementById('Device'+update.device).getElementsByTagName("img")[0];
+            device.src = statusSet[update.state];
+            //console.log(device.src);
+
+        });
+        //when socket connects, send a token of sorts
+        socket.on('connect',function(data){
+            socket.emit('login',{username:user, password: pass});
+        })
+    </script>
+    <script>
+        function changeState(tag) {
+            var device_id = tag.id.substring(6);
+            console.log(device_id);
+            socket.emit('toggle', {
+                id:device_id
+            });
+            console.log("Toggle Sent");
+        }
+    </script>
+</head>
+
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Lamp Control</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="/dash.html">Dash</a></li>
+            <li><a href="/index.html">Home</a></li>
+            <li><a href="/dashboard.html">Dashboard</a></li>
+            <li><a href="/dash.html">Dash</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+
+        </div>
+        <div id="Device1" onclick="changeState(this)" class="col-sm-2">
+            <h3 class="text-center">Light 1</h3>
+            <img class="img-responsive" src="img/BlackLight.png">
+        </div>
+        <div id="Device2" onclick="changeState(this)" class="col-sm-2">
+            <h3 class="text-center">Light 2</h3>
+            <img class="img-responsive" src="img/BlackLight.png">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+
+        </div>
+        <div id="Device3" onclick="changeState(this)" class="col-sm-2">
+            <h3 class="text-center">Light 3</h3>
+            <img class="img-responsive" src="img/BlackLight.png">
+        </div>
+        <div id="Device4" onclick="changeState(this)" class="col-sm-2">
+            <h3 class="text-center">Light 4</h3>
+            <img class="img-responsive" src="img/BlackLight.png">
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>
